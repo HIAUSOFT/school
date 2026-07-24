@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: school_app
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      - APP_ENV=local
+      - DB_HOST=db
+      - DB_DATABASE=school
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+  db:
+    image: mysql:8.0
+    container_name: school_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: school
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/mysql_dump.sql:/docker-entrypoint-initdb.d/dump.sql:ro
+
+volumes:
+  db_data:
